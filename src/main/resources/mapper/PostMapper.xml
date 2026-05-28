@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.exam0528_2.mapper.PostMapper">
+
+    <insert id="insert" parameterType="com.example.exam0528_2.domain.Post"
+            useGeneratedKeys="true" keyProperty="id">
+    insert into post (title,writer,content)
+    values (#{title},#{writer},#{content})
+
+    </insert>
+
+
+    <select id="selectAllPosts" resultType="com.example.exam0528_2.domain.Post">
+        select id, title, writer, content, created_at
+        from post
+        order by id desc
+    </select>
+
+    <select id="findById" resultType="com.example.exam0528_2.domain.Post">
+        SELECT id, title, writer, content, created_at
+        FROM post
+        WHERE id = #{id}
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        delete from post
+        where id = #{id}
+    </delete>
+
+</mapper>
+
+<!-- 인터페이스인 PostMapper 랑 Xml 인 PostMapper 서로 연계되는 세트 구성-->
+<!--실제 SQL을 작성하는 곳-->

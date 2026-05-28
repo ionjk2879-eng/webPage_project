@@ -1,0 +1,97 @@
+<!-- 글을 쓰는 폼/양식을 있어야 하는 html -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>새 글 작성</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; margin: 40px; color: #333; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 200px; resize: vertical; }
+        .btn-box { margin-top: 20px; text-align: right; }
+        .btn { padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+        .btn-submit { background-color: #2ecc71; color: white; margin-left: 10px; }
+        .btn-cancel { background-color: #95a5a6; color: white; text-decoration: none; display: inline-block; }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>✍️ 새 글 작성하기</h1>
+
+<form th:action="@{/posts}" method="post" id="postForm">
+
+    <div class="form-group">
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title" placeholder="제목을 입력하세요.">
+    </div>
+
+    <div class="form-group">
+        <label for="writer">작성자</label>
+        <input type="text" id="writer" name="writer" placeholder="작성자 이름을 입력하세요.">
+    </div>
+
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea id="content" name="content" placeholder="내용을 5자 이상 입력하세요."></textarea>
+    </div>
+
+    <div class="btn-box">
+        <a th:href="@{/posts}" class="btn btn-cancel">취소</a>
+        <button type="submit" class="btn btn-submit">등록 완료</button>
+    </div>
+
+</form>
+
+<script>
+    $(document).ready(function() {
+        // 요구 사항 2) 등록 시 JavaScript로 제어 (유효성 검사)
+        $('#postForm').on('submit', function(e) {
+            // 입력값 가져오기 (양끝 공백 제거)
+            const title = $('#title').val().trim();
+            const writer = $('#writer').val().trim();
+            const content = $('#content').val().trim();
+
+            // 1. 빈 값 검사
+            if (title === "") {
+                alert("제목을 입력해주세요.");
+                $('#title').focus();
+                e.preventDefault(); // 제출 막기
+                return false;
+            }
+
+            if (writer === "") {
+                alert("작성자를 입력해주세요.");
+                $('#writer').focus();
+                e.preventDefault();
+                return false;
+            }
+
+            if (content === "") {
+                alert("내용을 입력해주세요.");
+                $('#content').focus();
+                e.preventDefault();
+                return false;
+            }
+
+            // 2. 내용 글자 수 최소 5자 이상 검사
+            if (content.length < 5) {
+                alert("내용은 최소 5자 이상 입력하셔야 합니다. (현재 " + content.length + "자)");
+                $('#content').focus();
+                e.preventDefault();
+                return false;
+            }
+
+            // 3. 통과 시 최종 confirm 후 제출
+            if (!confirm("이대로 글을 등록하시겠습니까?")) {
+                e.preventDefault(); // 유저가 취소를 누르면 전송 중단
+                return false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

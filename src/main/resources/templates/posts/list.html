@@ -1,0 +1,74 @@
+<!-- 유저의 주소 입력값이 posts 일 때 실제로 보여줄 posts의 진짜 위치이자 글 목록 html -->
+<!-- 왜 입력값과 실제 주소값이 다른가?-->
+<!-- 1. 유저는 posts만 있어도 실제 위치의 것들을 볼 수 있기에 유저가 보기에 주소창이 간결하고 가독성이 높고 보기 이쁘다-->
+<!-- 유저한테 보이는 값이랑 입력값이랑 다르게 실제 위치 주소값이 드러나지 않아 보안성이 높다 -->
+<!-- 만약 서버에서 list의 위치가 바뀌어도 posts까지 수정할 필요 없어 유지보수가 편리함 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 목록</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; margin: 40px; color: #333; }
+        h1 { color: #2c3e50; }
+        .btn-box { margin-bottom: 20px; text-align: right; }
+        .btn { padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-create { background-color: #3498db; color: white; }
+        .btn-delete { background-color: #e74c3c; color: white; padding: 4px 8px; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #f8f9fa; color: #2c3e50; }
+        tr:hover { background-color: #f5f5f5; }
+        .empty-msg { text-align: center; padding: 50px; color: #7f8c8d; font-style: italic; }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>📋 게시판 목록</h1>
+
+<div class="btn-box">
+    <a th:href="@{/posts/new}" class="btn btn-create">새 글 쓰기</a>
+</div>
+
+<table th:if="${!#lists.isEmpty(posts)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>작성일</th>
+        <th>관리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${posts}">
+        <td th:text="${post.id}">1</td>
+        <td th:text="${post.title}" style="text-align: left;">제목 샘플</td>
+        <td th:text="${post.writer}">작성자</td>
+        <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-28 22:00</td>
+        <td>
+            <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" class="delete-form" style="margin:0;">
+                <button type="submit" class="btn btn-delete">삭제</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${#lists.isEmpty(posts)}" class="empty-msg">
+    <p>🙅‍♂️ 등록된 게시글이 없습니다. 첫 번째 글을 작성해 보세요!</p>
+</div>
+
+<script>
+    // 요구 사항 3) JavaScript confirm으로 삭제 확인 후 진행
+    $(document).ready(function() {
+        $('.delete-form').on('submit', function(e) {
+            if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+                e.preventDefault(); // 유저가 [취소]를 누르면 form 제출(POST 전송)을 막음
+            }
+        });
+    });
+</script>
+</body>
+</html>
